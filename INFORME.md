@@ -212,6 +212,10 @@ La Skill de Alexa permite controlar y consultar macetas inteligentes mediante co
 | `AMAZON.CancelIntent` / `AMAZON.StopIntent` | Finaliza la Skill. Si existe un riego activo, lo apaga por seguridad y registra el consumo. |
 | `AMAZON.FallbackIntent` | Responde cuando Alexa no reconoce el comando y orienta al usuario para intentar nuevamente. |
 
+## 2.7. Diseño de reportes (mockups) con información relevante para la toma de decisiones
+
+## 2.8. Diseño del modelo de datos (tablas, tipos de datos, claves, etc.) para DynamoDB
+
 # **3. Implementación**
 
 ## 3.1. Implementación del prototipo físico
