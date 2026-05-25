@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include "secrets.h"
 
 const char* WIFI_SSID = "UCB-PREMIUM";
