@@ -1,9 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-// identidad
-const char* THING_NAME = "thing_test";
-const char* CLIENT_ID  = "ESP32-thing_test";
+extern const char* THING_NAME;
+extern const char* CLIENT_ID;
 
 // pines
 #define SENSOR_HUMEDAD 35
@@ -13,14 +12,10 @@ const char* CLIENT_ID  = "ESP32-thing_test";
 #define LED_ROJO 22
 
 // calibración
-const int SENSOR_SECO   = 2600;
+const int SENSOR_SECO = 2600;
 const int SENSOR_MOJADO = 800;
 
 const int ADC_ERROR_MIN = 50;
 const int ADC_ERROR_MAX = 4050;
-
-// thresholds
-const int DEFAULT_THRESHOLD_LOW  = 30;
-const int DEFAULT_THRESHOLD_HIGH = 70;
 
 #endif
