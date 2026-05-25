@@ -249,21 +249,14 @@ Este gráfico representa el porcentaje de uso del sistema en modo automático y 
 <img width="794" height="474" alt="image" src="https://github.com/user-attachments/assets/4c424da2-4e3e-42a7-b4df-b9a73e472132" />
 
 
-### Gráfico 6. Tiempo de riego activo e inactivo
-
-Este gráfico muestra la proporción de tiempo durante la cual el sistema permaneció regando frente al tiempo en que estuvo inactivo. Permite analizar el comportamiento operativo general y el consumo energético del sistema.
-
-<img width="791" height="492" alt="image" src="https://github.com/user-attachments/assets/3484be33-5cbf-4b1d-81dd-cab1deb126ae" />
-
-
-### Gráfico 7. Evolución de la etapa de crecimiento
+### Gráfico 6. Evolución de la etapa de crecimiento
 
 Este gráfico presenta el avance de la planta a través de sus diferentes etapas de crecimiento registradas por el usuario mediante Alexa, como semilla, crecimiento y madurez. Permite realizar un seguimiento del desarrollo de la planta.
 
 <img width="784" height="474" alt="image" src="https://github.com/user-attachments/assets/b4744bd8-475f-4aa7-a037-96bd296bed73" />
 
 
-### Gráfico 8. Humedad promedio por maceta
+### Gráfico 7. Humedad promedio por maceta
 
 Este gráfico compara el promedio de humedad registrado entre diferentes macetas inteligentes asociadas al sistema. Permite identificar diferencias de comportamiento entre ubicaciones o tipos de planta.
 
@@ -271,6 +264,98 @@ Este gráfico compara el promedio de humedad registrado entre diferentes macetas
 
 
 ## 2.8. Diseño del modelo de datos (tablas, tipos de datos, claves, etc.) para DynamoDB
+## Tabla 1. Diseño de la tabla `irrigation_plants`
+
+| Atributo | Tipo | Clave | Descripción |
+| --- | --- | --- | --- |
+| `user_id` | String | PK | Identificador del usuario de Alexa. |
+| `plant_id` | String | SK | Identificador de la maceta. Se forma como `plant_name#location`. |
+| `thing_name` | String | GSI | Nombre del Thing asociado en AWS IoT Core. |
+| `plant_name` | String | — | Nombre de la planta indicado por el usuario. |
+| `plant_type` | String | — | Tipo de planta, por ejemplo tomate o albahaca. |
+| `location` | String | — | Ubicación de la maceta, por ejemplo escritorio o sala. |
+| `growth_stage` | String | — | Etapa de crecimiento: semilla, crecimiento o madurez. |
+| `height_cm` | Number | — | Altura actual de la planta en centímetros. |
+| `last_height_update` | String | — | Fecha de la última actualización de altura. |
+| `pump_flow_ml_per_min` | Number | — | Caudal estimado de la bomba en ml/min. |
+| `pump_watts` | Number | — | Potencia estimada de la bomba. |
+| `threshold_low` | Number | — | Humedad mínima configurada. |
+| `threshold_high` | Number | — | Humedad máxima configurada. |
+| `active_irrigation_start` | String | — | Timestamp temporal del inicio de un riego manual. |
+| `active_humidity_before` | Number | — | Humedad registrada antes del riego. |
+| `active_irrigation_mode` | String | — | Modo en el que se inició el riego. |
+
+Esta tabla permite que un mismo usuario tenga varias macetas independientes. La clave `user_id` agrupa las macetas de un usuario, mientras que `plant_id` identifica una maceta específica. El atributo `thing_name` permite relacionar la maceta con su dispositivo IoT y su Device Shadow.
+
+---
+
+## Tabla 2. Diseño de la tabla `humidity_readings`
+
+| Atributo | Tipo | Clave | Descripción |
+| --- | --- | --- | --- |
+| `thing_name` | String | PK | Identificador del dispositivo IoT que generó la lectura. |
+| `timestamp` | String | SK | Fecha y hora de la lectura en formato ISO 8601. |
+| `user_id` | String | — | Usuario propietario de la maceta. |
+| `humidity` | Number | — | Humedad medida en porcentaje. |
+| `growth_stage` | String | — | Etapa de crecimiento al momento de la lectura. |
+
+Esta tabla almacena el historial de humedad de cada maceta. Se utiliza `thing_name` como clave de partición para facilitar el almacenamiento directo desde AWS IoT Rules, ya que los mensajes MQTT publicados por el ESP32 incluyen el identificador del dispositivo.
+
+---
+
+## Tabla 3. Diseño de la tabla `irrigation_events`
+
+| Atributo | Tipo | Clave | Descripción |
+| --- | --- | --- | --- |
+| `thing_name` | String | PK | Dispositivo IoT asociado al evento de riego. |
+| `timestamp` | String | SK | Fecha y hora del evento en formato ISO 8601. |
+| `user_id` | String | — | Usuario propietario de la maceta. |
+| `plant_id` | String | — | Maceta asociada al evento. |
+| `duration_sec` | Number | — | Duración del riego en segundos. |
+| `water_ml` | Number | — | Consumo estimado de agua en mililitros. |
+| `energy_wh` | Number | — | Consumo estimado de energía en Wh. |
+| `humidity_before` | Number | — | Humedad registrada antes del riego. |
+| `humidity_after` | Number | — | Humedad registrada después del riego. |
+| `mode` | String | — | Modo del evento: manual o automático. |
+| `growth_stage` | String | — | Etapa de crecimiento durante el evento. |
+
+Esta tabla permite analizar cada evento de riego ejecutado por una maceta. Los datos permiten calcular uso de agua, energía y cambios de humedad antes y después del riego.
+
+---
+
+## Tabla 4. Diseño de la tabla `irrigation_daily_summary`
+
+| Atributo | Tipo | Clave | Descripción |
+| --- | --- | --- | --- |
+| `thing_name` | String | PK | Dispositivo IoT asociado al resumen. |
+| `date` | String | SK | Fecha del resumen en formato `YYYY-MM-DD`. |
+| `user_id` | String | — | Usuario propietario de la maceta. |
+| `total_water_ml` | Number | — | Total de agua consumida durante el día. |
+| `total_energy_wh` | Number | — | Total de energía consumida durante el día. |
+| `irrigation_count` | Number | — | Cantidad de riegos realizados durante el día. |
+| `total_duration_sec` | Number | — | Tiempo total de riego acumulado en segundos. |
+
+Esta tabla resume los eventos de riego por día. Se utiliza para responder consultas estadísticas desde Alexa, como la cantidad de veces que se regó una maceta y el consumo estimado de agua o energía.
+
+---
+
+## Tabla 5. Diseño de la tabla `growth_log`
+
+| Atributo | Tipo | Clave | Descripción |
+| --- | --- | --- | --- |
+| `thing_name` | String | PK | Dispositivo asociado a la maceta. |
+| `date` | String | SK | Fecha del registro en formato `YYYY-MM-DD`. |
+| `user_id` | String | — | Usuario propietario de la maceta. |
+| `plant_id` | String | — | Identificador de la maceta. |
+| `height_cm` | Number | — | Altura registrada de la planta en centímetros. |
+| `growth_stage` | String | — | Etapa de crecimiento registrada. |
+| `notes` | String | — | Observaciones adicionales. |
+
+El modelo de datos fue diseñado para permitir que un usuario de Alexa pueda administrar múltiples macetas inteligentes independientes. La tabla principal, `irrigation_plants`, relaciona al usuario con cada maceta registrada mediante una clave compuesta por `user_id` y `plant_id`. El atributo `thing_name` vincula cada maceta con su dispositivo físico en AWS IoT Core.
+
+Las tablas históricas utilizan `thing_name` como clave de partición para asociar directamente los datos generados por cada ESP32. Esta decisión facilita la integración con AWS IoT Rules, ya que los dispositivos publican telemetría y eventos MQTT incluyendo su identificador de Thing.
+
+El modelo permite almacenar configuración, lecturas de humedad, eventos de riego, resúmenes diarios y registros de crecimiento, cubriendo tanto las necesidades de control del sistema como la generación de reportes y estadísticas.
 
 # **3. Implementación**
 
