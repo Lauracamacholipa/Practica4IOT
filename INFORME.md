@@ -214,6 +214,62 @@ La Skill de Alexa permite controlar y consultar macetas inteligentes mediante co
 
 ## 2.7. Diseño de reportes (mockups) con información relevante para la toma de decisiones
 
+### Gráfico 1. Humedad del suelo en función del tiempo
+
+Este gráfico representa la evolución del porcentaje de humedad del suelo registrado por cada maceta inteligente a lo largo del tiempo. Permite observar cómo varía la humedad antes, durante y después de un evento de riego, verificando el correcto funcionamiento del sistema automático.
+
+<img width="804" height="500" alt="image" src="https://github.com/user-attachments/assets/2b9b655b-1765-4ce4-b7a6-751aa5e88d7b" />
+
+
+### Gráfico 2. Cantidad de eventos de riego por día
+
+Este gráfico muestra el número de activaciones del sistema de riego registradas diariamente. Permite analizar la frecuencia de riego y detectar patrones de uso o variaciones en la demanda hídrica de la planta.
+
+<img width="805" height="486" alt="image" src="https://github.com/user-attachments/assets/49c00557-7096-481f-8465-85fbb9ab4c86" />
+
+
+### Gráfico 3. Consumo estimado de agua por periodo
+
+Este gráfico presenta el consumo estimado de agua utilizado por cada maceta durante un periodo determinado (día, semana o mes), calculado a partir de la duración del riego y el caudal configurado de la bomba. Permite evaluar la eficiencia hídrica del sistema.
+
+<img width="801" height="500" alt="image" src="https://github.com/user-attachments/assets/aab2a70c-169f-47c9-8293-5da9731e3335" />
+
+
+### Gráfico 4. Duración promedio de los eventos de riego
+
+Este gráfico muestra el tiempo promedio que permanece activa la bomba de agua durante cada evento de riego. Permite identificar si los tiempos de riego son consistentes y adecuados para mantener la humedad deseada.
+
+<img width="812" height="483" alt="image" src="https://github.com/user-attachments/assets/539af133-38cd-47db-955b-6f49914bee1e" />
+
+
+### Gráfico 5. Distribución de modos de operación
+
+Este gráfico representa el porcentaje de uso del sistema en modo automático y en modo manual. Permite evaluar qué tan frecuentemente el usuario interviene manualmente frente al funcionamiento autónomo del sistema.
+
+<img width="794" height="474" alt="image" src="https://github.com/user-attachments/assets/4c424da2-4e3e-42a7-b4df-b9a73e472132" />
+
+
+### Gráfico 6. Tiempo de riego activo e inactivo
+
+Este gráfico muestra la proporción de tiempo durante la cual el sistema permaneció regando frente al tiempo en que estuvo inactivo. Permite analizar el comportamiento operativo general y el consumo energético del sistema.
+
+<img width="791" height="492" alt="image" src="https://github.com/user-attachments/assets/3484be33-5cbf-4b1d-81dd-cab1deb126ae" />
+
+
+### Gráfico 7. Evolución de la etapa de crecimiento
+
+Este gráfico presenta el avance de la planta a través de sus diferentes etapas de crecimiento registradas por el usuario mediante Alexa, como semilla, crecimiento y madurez. Permite realizar un seguimiento del desarrollo de la planta.
+
+<img width="784" height="474" alt="image" src="https://github.com/user-attachments/assets/b4744bd8-475f-4aa7-a037-96bd296bed73" />
+
+
+### Gráfico 8. Humedad promedio por maceta
+
+Este gráfico compara el promedio de humedad registrado entre diferentes macetas inteligentes asociadas al sistema. Permite identificar diferencias de comportamiento entre ubicaciones o tipos de planta.
+
+<img width="803" height="482" alt="image" src="https://github.com/user-attachments/assets/8f0b937f-edd5-426e-bc83-73a942c552f4" />
+
+
 ## 2.8. Diseño del modelo de datos (tablas, tipos de datos, claves, etc.) para DynamoDB
 
 # **3. Implementación**
